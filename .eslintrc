@@ -1,0 +1,24 @@
+// {
+//     "extends": "airbnb",
+//     "plugins": ["react"],
+//     "rules": {
+//         "max-len": ["error", {"code":600}],
+//         "eqeqeq":0,
+//         "no-restricted-syntax":0,
+//         "react/jsx-filename-extension":0
+//     },
+//     "parserOptions": {
+//         "ecmaVersion": 2020
+//     }
+// }
+
+//package.jsons
+//devdependencies
+  // "eslint": "^8.8.0",
+    // "eslint-config-airbnb": "^19.0.4",
+    // "eslint-plugin-import": "^2.25.4",
+    // "eslint-plugin-react": "^7.28.0",
+    // "eslint-plugin-react-hooks": "^4.3.0",
+  // scripts
+  //   "fixlint": "eslint ./src/components --fix",
+  //   "lint": "eslint ."
