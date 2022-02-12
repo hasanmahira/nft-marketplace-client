@@ -1,4 +1,4 @@
-import CardItem from 'components';
+import CardItem from 'components/organisms/CardItem';
 
 function Cards() {
   const cards = [

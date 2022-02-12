@@ -1,14 +1,15 @@
-import { BiGlobe } from 'react-icons/bi';
-import { RiUserFill, RiUserAddFill } from 'react-icons/ri';
-import { HiLocationMarker } from 'react-icons/hi';
-import { IoIosArrowForward } from 'react-icons/io';
-import { NavLink } from 'react-router-dom';
+import { BiGlobe } from "react-icons/bi";
+import { RiUserFill, RiUserAddFill } from "react-icons/ri";
+import { HiLocationMarker } from "react-icons/hi";
+import { IoIosArrowForward } from "react-icons/io";
+import { FaUserPlus } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 export default function Header() {
   return (
     <div className="bg-brand-color">
       <div className="container mx-auto h-11 flex items-center justify-center md:justify-between">
-        <a href="#">
+        <a href="/#">
           <svg
             width="110"
             height="36"
@@ -54,7 +55,15 @@ export default function Header() {
             className="flex items-center gap-x-2 text-white transition-all text-opacity-80 hover:text-opacity-100"
           >
             <RiUserFill size={20} />
-            Giriş Yap
+            Login
+          </NavLink>
+          <NavLink
+            exact
+            to="/register"
+            className="flex items-center gap-x-2 text-white transition-all text-opacity-80 hover:text-opacity-100"
+          >
+            <FaUserPlus size={20} />
+            Register
           </NavLink>
           {/* <a
             href="#"

@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Button = ({ label }) => {
+const Text = ({ label }) => {
   return (
-  <div className="button">{label}</div>
+  <div className="text">{label}</div>
   );
 };
 
-Button.propTypes = {
+Text.propTypes = {
   label: PropTypes.string.isRequired,
 };
 
-export default Button;
+export default Text;
