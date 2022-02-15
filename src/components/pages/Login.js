@@ -1,37 +1,64 @@
 import React, { useState, useEffect } from "react";
 import { useWindowWidth } from "@react-hook/window-size";
-import { DatePicker, message, Col, Row, Form, Button, Input } from "antd";
-import Text from "../atoms/Text.js";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql,
+  useLazyQuery,
+  variables,
+} from "@apollo/client";
+import { DatePicker, message, Col, Row, Form, Input } from "antd";
+import Button from "../atoms/Button.js";
 import { FaRegUser } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
 // import 'antd/dist/antd.css';
 import loginImg from "../assets/login.png";
+// import UseLogin from "../hooks/UseLogin"
 
 //https://3x.ant.design/components/form/
 //https://tailwindcomponents.com/component/login-form
 //https://tailwindcomponents.com/component/native-and-social-login-form
 
+const client = new ApolloClient({
+  uri: "http://127.0.0.1:3000/graphql",
+  cache: new InMemoryCache(),
+});
+
+const login = gql`
+  query login($email: String!, $password: String!) {
+    login(email: $email, password: $password)
+  }
+`;
+
 function Login() {
   const width = useWindowWidth();
-  const [date, setDate] = useState(null);
   const [form] = Form.useForm();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
 
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
+  async function loginUser(email, password) {
+    await client
+      .query({
+        query: login,
+        variables: {
+          email: email,
+          password: password,
+        },
+      })
+      .then((result) => setToken(result.data.login));
   }
 
-  function handleSubmit(e) {
-    debugger;
-    console.log("event", e);
-    e.preventDefault();
-    return <a href="/#"></a>;
+  function handleSubmit() {
+    const { email, password } = form.getFieldsValue("email");
+    if (email && email.length > 3 && password && password.length > 3) {
+      loginUser(email, password);
+    }
   }
 
   useEffect(() => {
-    console.log("form", form);
-  }, [form]);
+    console.log("token", token);
+  }, [token]);
 
   return (
     <>
@@ -48,7 +75,7 @@ function Login() {
           {width > 640 && (
             <Form
               form={form}
-              onSubmit={handleSubmit}
+              onSubmit={() => handleSubmit()}
               name="basic"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
@@ -58,28 +85,27 @@ function Login() {
             >
               <Form.Item
                 name="email"
-                label="Email"
                 size="large"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your email or username!",
+                    message: "Please input your email!",
                   },
                 ]}
+                className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
               >
                 <Input
-                  prefix={<FaRegUser size={20} />}
-                  placeholder="Username"
+                  prefix={<FaRegUser size={20} position="center" />}
+                  placeholder="Email"
                   type="email"
-                  value={email}
+                  // value={email}
                   autoFocus
-                  onChange={(e) => setEmail(e.target.value)}
+                  // onChange={(e) => setEmail(e.target.value)}
                 ></Input>
               </Form.Item>
 
               <Form.Item
                 name="password"
-                label="Password"
                 size="large"
                 rules={[
                   {
@@ -87,48 +113,38 @@ function Login() {
                     message: "Please input your password!",
                   },
                 ]}
+                className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
               >
                 <Input
                   prefix={<RiLockPasswordLine size={20} />}
                   placeholder="Password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  // value={password}
+                  // onChange={(e) => setPassword(e.target.value)}
                 ></Input>
               </Form.Item>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
-                  disabled={!validateForm()}
-                >
-                  Login
-                </Button>
-              </Form.Item>
-              <div className="flex items-center justify-between">
-                <button
-                  className="bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded"
-                  type="button"
-                >
-                  Sign In
-                </button>
-                <a
-                  className="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker"
-                  href="/#"
-                >
-                  Forgot Password?
-                </a>
-              </div>
+              <a href="/#" className="self-end mt-4 text-gray-600 font-bold">
+                Forgot password?
+              </a>
+
+              <Form.Item></Form.Item>
 
               <div className="flex items-center justify-between">
-                <a
-                  className="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker"
-                  href="/register"
-                >
-                  Register
-                </a>
+                <Button
+                  color="blue-600"
+                  href="#"
+                  // htmlType="submit"
+                  // disabled={!validateForm()}
+                  onPress={() => handleSubmit()}
+                  label="Login"
+                />
               </div>
+              <a
+                href="/register"
+                className="self-end mt-4 text-gray-600 font-bold"
+              >
+                Sign Up
+              </a>
             </Form>
           )}
         </div>
