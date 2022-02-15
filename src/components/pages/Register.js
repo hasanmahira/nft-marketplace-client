@@ -1,90 +1,297 @@
 import React, { useState, useEffect } from "react";
+import { useWindowWidth } from "@react-hook/window-size";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql,
+  useLazyQuery,
+  variables,
+  useMutation,
+} from "@apollo/client";
+import { DatePicker, message, Col, Row, Form, Input } from "antd";
+import Button from "../atoms/Button.js";
+import { FaRegUser } from "react-icons/fa";
+import { RiLockPasswordLine } from "react-icons/ri";
+import loginImg from "../assets/login.png";
+// import register from "../hooks/UseRegister";
+
+const client = new ApolloClient({
+  uri: "http://127.0.0.1:3000/graphql",
+  cache: new InMemoryCache(),
+});
+
+const register = gql`
+  mutation register(
+    $email: String!
+    $password: String!
+    $name: String!
+    $surname: String!
+    $userName: String!
+    $bdate: String!
+    $createdAt: String!
+    $updatedAt: String!
+  ) {
+    register(
+      email: $email
+      passwordDigest: $password
+      name: $name
+      surname: $surname
+      userName: $userName
+      bdate: $bdate
+      createdAt: $createdAt
+      updatedAt: $updatedAt
+    ) {
+      email
+    }
+  }
+`;
 
 function Register() {
+  const width = useWindowWidth();
+  const [form] = Form.useForm();
+  const [token, setToken] = useState("");
+  // const [addUser, { data, loading, error }] = useMutation(register);
+
+  async function registerUser(
+    email,
+    password,
+    name,
+    surname,
+    userName,
+    bdate,
+    createdAt,
+    updatedAt
+  ) {
+    // addUser({
+    //   variables: {
+    //     email: email,
+    //     password: password,
+    //     name: name,
+    //     surname: surname,
+    //     userName: userName,
+    //     bdate: bdate,
+    //     createdAt: createdAt,
+    //     updatedAt: updatedAt,
+    //   },
+    // }).then((result) => setToken(result));
+
+    await client.mutate({
+      mutation: register,
+      variables: {
+        email: email,
+        password: password,
+        name: name,
+        surname: surname,
+        userName: userName,
+        bdate: bdate,
+        createdAt: "createdAt",
+        updatedAt: "updatedAt",
+      },
+    })
+    .then((result) => setToken(result.data.register));
+  }
+
+  function handleSubmit() {
+    const {
+      email,
+      password,
+      name,
+      surname,
+      userName,
+      bdate,
+      createdAt,
+      updatedAt,
+    } = form.getFieldsValue("email");
+    if (
+      email &&
+      email.length > 3 &&
+      password &&
+      password.length > 3 &&
+      name &&
+      name.length > 3 &&
+      surname &&
+      surname.length > 3 &&
+      userName &&
+      userName.length > 3 &&
+      bdate &&
+      bdate.length > 3
+    ) {
+      registerUser(
+        email,
+        password,
+        name,
+        surname,
+        userName,
+        bdate,
+        createdAt,
+        updatedAt
+      );
+    }
+  }
+
+  useEffect(() => {
+    console.log("token", token);
+  }, [token]);
+
   return (
     <>
       <div className="grid gap-y-6 py-6 pb-14 container mx-auto">
         <div className="bg-white transparent flex flex-col gap-y-2 text-center items-center rounded-lg px-6 py-10">
-          <form class="bg-white shadow-xl mb-4 flex flex-wrap justify-center">
-            <div class="w-full md:w-1/3 bg-blue-600 p-6 text-white">
-              <p class="mb-8 text-3xl flex items-center">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 512 512"
-                  class="inline-block fill-current h-8 w-8 mr-2"
-                >
-                  <path d="m64 496l0-256 48 0 0-80c0-71 57-128 128-128l16 0c71 0 128 57 128 128l0 80 48 0 0 256z m172-131l-12 83 48 0-12-83c12-5 20-17 20-30 0-18-14-32-32-32-18 0-32 14-32 32 0 13 8 25 20 30z m100-197c0-49-39-88-88-88-49 0-88 39-88 88l0 72 176 0z" />
-                </svg>
-                Login Now
-              </p>
-              <div class="mb-4">
-                <input
-                  class="appearance-none border w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  type="email"
-                  placeholder="Email"
+          <div className="loginImage">
+            <img
+              src={loginImg}
+              width="300"
+              style={{ position: "relative" }}
+              alt="login"
+            />
+          </div>
+          {width > 640 && (
+            <Form
+              form={form}
+              onSubmit={() => handleSubmit()}
+              name="basic"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+              initialValues={{ remember: true }}
+              autoComplete="off"
+              layout="inline"
+            >
+              <Row>
+                <Col span={12}>
+                  <Form.Item
+                    name="email"
+                    size="large"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your email!",
+                      },
+                    ]}
+                    className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
+                  >
+                    <Input
+                      prefix={<FaRegUser size={20} position="center" />}
+                      placeholder="Email"
+                      type="email"
+                      autoFocus
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    name="password"
+                    size="large"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your password!",
+                      },
+                    ]}
+                    className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
+                  >
+                    <Input
+                      prefix={<RiLockPasswordLine size={20} />}
+                      placeholder="Password"
+                      type="password"
+                    ></Input>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Form.Item
+                name="name"
+                size="large"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your name!",
+                  },
+                ]}
+                className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
+              >
+                <Input
+                  prefix={<RiLockPasswordLine size={20} />}
+                  placeholder="Name"
+                  type="name"
+                ></Input>
+              </Form.Item>
+
+              <Form.Item
+                name="surname"
+                size="large"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your surname!",
+                  },
+                ]}
+                className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
+              >
+                <Input
+                  prefix={<RiLockPasswordLine size={20} />}
+                  placeholder="Surname"
+                  type="surname"
+                ></Input>
+              </Form.Item>
+
+              <Form.Item
+                name="userName"
+                size="large"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your userName!",
+                  },
+                ]}
+                className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
+              >
+                <Input
+                  prefix={<RiLockPasswordLine size={20} />}
+                  placeholder="UserName"
+                  type="userName"
+                ></Input>
+              </Form.Item>
+
+              <Form.Item
+                name="bdate"
+                size="large"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your bdate!",
+                  },
+                ]}
+                className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
+              >
+                <Input
+                  prefix={<RiLockPasswordLine size={20} />}
+                  placeholder="Birthdate"
+                  type="date"
+                ></Input>
+              </Form.Item>
+
+              <a href="/#" className="self-end mt-4 text-gray-600 font-bold">
+                Forgot password?
+              </a>
+
+              <div className="flex items-center justify-between">
+                <Button
+                  color="blue-600"
+                  href="#"
+                  onPress={() => handleSubmit()}
+                  label="Register"
                 />
               </div>
-              <div class="mb-6">
-                <input
-                  class="appearance-none border w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                  type="password"
-                  placeholder="Password"
-                />
-              </div>
-              <button
-                class="block w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline"
-                type="submit"
+              <a
+                href="/login"
+                className="self-end mt-4 text-gray-600 font-bold"
               >
                 Login
-              </button>
-
-              <label class="block text-sm mb-4">
-                <input type="checkbox" /> Remember me
-              </label>
-
-              <a
-                class="block w-full text-sm text-right text-white hover:text-gray-300"
-                href="#"
-              >
-                Forgot Password?
               </a>
-            </div>
-            <div class="w-full md:w-2/3 p-6 flex flex-col justify-between">
-              <p class="text-gray-700 mb-8">
-                Login to access your files, communicate with colleagues and view
-                project content.
-              </p>
-              <a
-                class="block w-full mb-8 text-sm text-center text-blue-600 hover:text-blue-700"
-                href="#"
-              >
-                Don't have an account? Register Now!
-              </a>
-
-              <p class="mb-4 text-center">OR</p>
-              <hr class="block w-full mb-4 border-0 border-t border-gray-300" />
-
-              <div class="flex flex-wrap justify-center">
-                <div class="w-full sm:w-1/2 sm:pr-2 mb-3 sm:mb-0">
-                  <button
-                    class="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline"
-                    type="button"
-                  >
-                    Login with Facebook
-                  </button>
-                </div>
-                <div class="w-full sm:w-1/2 sm:pl-2">
-                  <button
-                    class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 focus:outline-none focus:shadow-outline"
-                    type="button"
-                  >
-                    Login with Google
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
+            </Form>
+          )}
         </div>
       </div>
     </>
