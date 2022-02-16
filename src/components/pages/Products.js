@@ -10,7 +10,7 @@ function Products() {
         id: 1,
         title: "Lay's Mevsim Yeşillikli",
         image:
-          'https://cdn.getir.com/product/5bc97aabb137fb001d751ac7_tr_1609123518121.jpeg',
+          'https://ipfs.io/ipfs/bafybeibtead7cdixjmuifcba7qdwazgs5fbnfydgdp4hlkz2jw35udcyrq',
         alt: '96 g',
         price: 6.36,
       },
