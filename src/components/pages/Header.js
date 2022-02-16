@@ -43,21 +43,21 @@ export default function Header() {
         </a>
 
         <nav className="hidden md:flex gap-x-8 text-sm font-semibold">
-          <div class="flex rounded-full border-grey-light border">
+          <div className="flex rounded-full border-grey-light border">
             <button>
-              <span class="w-50 flex justify-end items-center text-grey p-2">
-                <i class="material-icons text-3xl">search</i>
+              <span className="w-50 flex justify-end items-center text-grey p-2">
+                <i className="material-icons text-3xl">search</i>
               </span>
             </button>
             <input
-              class="w-90 rounded mr-4"
+              className="w-90 rounded mr-4"
               type="text"
               placeholder="Search..."
             />
           </div>
           <NavLink
             exact
-            to="/login"
+            to="/create"
             className="flex items-center gap-x-2 text-white transition-all text-opacity-80 hover:text-opacity-100"
           >
             <IoCreateSharp size={20} />
