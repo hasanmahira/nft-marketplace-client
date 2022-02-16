@@ -13,9 +13,9 @@ import {
 import { DatePicker, message, Col, Row, Form, Input, Upload } from "antd";
 import Button from "../atoms/Button.js";
 import { FaRegUser } from "react-icons/fa";
-import {Buffer} from 'buffer';
-import { NFTStorage, File } from "nft.storage";
-
+import { Buffer } from "buffer";
+import { NFTStorage, File, Blob } from "nft.storage";
+// import * as fs from "fs/promises";
 const { Dragger } = Upload;
 
 const token =
@@ -56,38 +56,12 @@ const createNftMut = gql`
   }
 `;
 
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-
-function beforeUpload(file) {
-  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
-  }
-  return isJpgOrPng && isLt2M;
-}
-
 function CreateNftFile() {
   const width = useWindowWidth();
   const [form] = Form.useForm();
   const [token, setToken] = useState("");
-  const [selectedFile, setSelectedFile] = useState();
-  const [isFilePicked, setIsFilePicked] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
-  const [files, setFiles] = useState([]);
   const [fileList, setFileList] = useState([]);
-
-  const onInputChange = (e) => {
-    setFiles(e.target.files);
-  };
-  // const [addUser, { data, loading, error }] = useMutation(register);
+  const [base64File, setBase64File] = useState("");
 
   async function createNft(
     creator,
@@ -120,15 +94,31 @@ function CreateNftFile() {
       .then((result) => setToken(result.data.createNft));
   }
 
-  async function uploadData(event) {
-    debugger;
+  function uploadData(event) {
     const dataBuffer = event.target.result;
     const buff = Buffer.from(dataBuffer);
-    const base64str = buff.toString("base64");
-    console.log("base64str", base64str);
+    setBase64File(buff);
   }
 
-  function handleSubmit() {
+  function getBlob(event) {
+    if (fileList.length === 1) {
+      let fileExt = fileList[0].name.split(".");
+      fileExt = fileExt[fileExt.length - 1];
+    }
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(fileList[0]);
+    reader.onload = uploadData;
+  }
+
+  useEffect(() => {
+    fileList && fileList.length === 1 ? getBlob() : "";
+  }, [fileList]);
+
+  useEffect(() => {
+    base64File ? base64File : "";
+  }, [base64File]);
+
+  async function handleSubmit(event) {
     let {
       creator,
       price,
@@ -141,18 +131,8 @@ function CreateNftFile() {
       createdAt,
       updatedAt,
     } = form.getFieldsValue("name");
-    debugger;
-
-    if (fileList.length === 1) {
-      let fileExt = fileList[0].name.split(".");
-      fileExt = fileExt[fileExt.length - 1];
-    }
-    debugger;
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(fileList[0]);
-    reader.onload = uploadData;
-
-    cid = "bafkreifdrq2tk7rc7vwzfqfqphw6df3chhtfuslx7qfltrhnaseisyxclu";
+    const nftCid = await nftStorageClient.storeBlob(new Blob([base64File]));
+    cid = nftCid;
     creator = "current user comes from hooks or token";
     createdAt = Date.now().toString();
     updatedAt = Date.now().toString();
@@ -173,8 +153,8 @@ function CreateNftFile() {
     // ) {
     createNft(
       creator,
-      Math.floor(price),
-      name,
+      parseFloat(12),
+      "name",
       description,
       parseInt(category),
       Boolean(onSale),
@@ -186,16 +166,7 @@ function CreateNftFile() {
     // }
   }
 
-  const changeHandler = (event) => {
-    setSelectedFile(event.target.files[0]);
-    setIsSelected(true);
-  };
-
   useEffect(() => {}, [token]);
-
-  function onSuccess(savedFiles) {
-    setFiles(savedFiles);
-  }
 
   return (
     <>
@@ -317,47 +288,27 @@ function CreateNftFile() {
                   <Input placeholder="isAuction" type="boolean"></Input>
                 </Form.Item>
 
-                <Form.Item
-                  name="cid"
-                  size="large"
-                  className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
-                >
-                  {/* <input type="file" name="file" onChange={changeHandler} /> */}
-                  {/* <FileUploader /> */}
-                 
-
-                  {/* <div className="form-group files">
-                    <input
-                      type="file"
-                      onChange={onInputChange}
-                      className="form-control"
-                    />
-                  </div> */}
-                </Form.Item>
-
                 <Dragger
-                    name="File"
-                    multiple={false}
-                    accept=".png, .jpeg, .jpg, .gif"
-                    action=""
-                    beforeUpload={(file) => {
-                      setFileList([file]);
+                  name="File"
+                  multiple={false}
+                  accept=".png, .jpeg, .jpg, .gif"
+                  action=""
+                  beforeUpload={(file) => {
+                    setFileList([file]);
+                    return false;
+                  }}
+                  onRemove={(file) => {
+                    setFileList(() => {
+                      const index = fileList.indexOf(file);
+                      const newFileList = fileList.slice();
+                      newFileList.splice(index, 1);
                       return false;
-                    }}
-                    onRemove={(file) => {
-                      setFileList(() => {
-                        const index = fileList.indexOf(file);
-                        const newFileList = fileList.slice();
-                        newFileList.splice(index, 1);
-                        return false;
-                      });
-                    }}
-                  >
-                    <FaRegUser size={20} position="center" />
-                  </Dragger>
-                {/* <p className="text-sm text-gray-300">
-                  <span>File type: doc,pdf,types of images</span>
-                </p> */}
+                    });
+                  }}
+                >
+                  <FaRegUser size={20} position="center" />
+                </Dragger>
+
                 <div>
                   <button
                     className="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4  rounded-full tracking-wide
