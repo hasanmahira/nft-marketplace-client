@@ -3,23 +3,13 @@ import { useWindowWidth } from "@react-hook/window-size";
 import {
   ApolloClient,
   InMemoryCache,
-  ApolloProvider,
-  useQuery,
   gql,
-  useLazyQuery,
-  variables,
 } from "@apollo/client";
-import { DatePicker, message, Col, Row, Form, Input } from "antd";
+import { Form, Input } from "antd";
 import Button from "../atoms/Button.js";
 import { FaRegUser } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
-// import 'antd/dist/antd.css';
 import loginImg from "../assets/login.png";
-// import UseLogin from "../hooks/UseLogin"
-
-//https://3x.ant.design/components/form/
-//https://tailwindcomponents.com/component/login-form
-//https://tailwindcomponents.com/component/native-and-social-login-form
 
 const client = new ApolloClient({
   uri: "http://127.0.0.1:3000/graphql",
@@ -98,9 +88,7 @@ function Login() {
                   prefix={<FaRegUser size={20} position="center" />}
                   placeholder="Email"
                   type="email"
-                  // value={email}
                   autoFocus
-                  // onChange={(e) => setEmail(e.target.value)}
                 ></Input>
               </Form.Item>
 
@@ -117,24 +105,15 @@ function Login() {
               >
                 <Input
                   prefix={<RiLockPasswordLine size={20} />}
-                  placeholder="Password"
+                  placeholder="New Password"
                   type="password"
-                  // value={password}
-                  // onChange={(e) => setPassword(e.target.value)}
                 ></Input>
               </Form.Item>
-              <a href="/#" className="self-end mt-4 text-gray-600 font-bold">
-                Forgot password?
-              </a>
-
-              <Form.Item></Form.Item>
 
               <div className="flex items-center justify-between">
                 <Button
                   color="blue-600"
                   href="#"
-                  // htmlType="submit"
-                  // disabled={!validateForm()}
                   onPress={() => handleSubmit()}
                   label="Login"
                 />

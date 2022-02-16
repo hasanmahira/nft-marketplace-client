@@ -64,19 +64,6 @@ function Register() {
     createdAt,
     updatedAt
   ) {
-    // addUser({
-    //   variables: {
-    //     email: email,
-    //     password: password,
-    //     name: name,
-    //     surname: surname,
-    //     userName: userName,
-    //     bdate: bdate,
-    //     createdAt: createdAt,
-    //     updatedAt: updatedAt,
-    //   },
-    // }).then((result) => setToken(result));
-
     await client.mutate({
       mutation: register,
       variables: {

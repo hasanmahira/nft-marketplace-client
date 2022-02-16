@@ -3,6 +3,7 @@ import { RiUserFill, RiUserAddFill } from "react-icons/ri";
 import { HiLocationMarker } from "react-icons/hi";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaUserPlus } from "react-icons/fa";
+import { IoCreateSharp } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 
 export default function Header() {
@@ -42,13 +43,26 @@ export default function Header() {
         </a>
 
         <nav className="hidden md:flex gap-x-8 text-sm font-semibold">
-          {/* <a
-            href="#"
+          <div class="flex rounded-full border-grey-light border">
+            <button>
+              <span class="w-50 flex justify-end items-center text-grey p-2">
+                <i class="material-icons text-3xl">search</i>
+              </span>
+            </button>
+            <input
+              class="w-90 rounded mr-4"
+              type="text"
+              placeholder="Search..."
+            />
+          </div>
+          <NavLink
+            exact
+            to="/login"
             className="flex items-center gap-x-2 text-white transition-all text-opacity-80 hover:text-opacity-100"
           >
-            <BiGlobe size={20} />
-            Türkçe (TR)
-          </a> */}
+            <IoCreateSharp size={20} />
+            Create
+          </NavLink>
           <NavLink
             exact
             to="/login"
