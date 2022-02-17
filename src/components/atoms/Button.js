@@ -1,13 +1,21 @@
-function CardItem({ card: { title, image, description } }) {
-  return (
-    <div className="bg-white flex flex-col gap-y-2 text-center items-center rounded-lg px-6 py-10">
-      <img src={image} className="w-36 h-36 mb-4" />
-      <h3 className="text-lg font-semibold text-purple-700">{title}</h3>
-      <p className="text-sm text-gray-600 px-5">
-        {description}
-      </p>
-    </div>
-  );
-}
+import React from "react";
+import PropTypes from "prop-types";
 
-export default CardItem;
+const Button = ({ label, color, href, onPress }) => {
+ 
+  const cssInput = `py-3 px-20 bg-regalBlue rounded-full text-white font-bold uppercase text-lg mt-4 transform hover:translate-y-1 transition-all duration-500`;
+
+  return (
+    <button href={href ? href : ""} className={cssInput} onClick={() => onPress()}>
+      {label}
+    </button>
+  );
+};
+
+Button.propTypes = {
+  label: PropTypes.string,
+  color: PropTypes.string,
+  href: PropTypes.string,
+};
+
+export default Button;

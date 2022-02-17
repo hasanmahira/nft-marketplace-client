@@ -8,7 +8,7 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import loginImg from "../assets/login.png";
 import { Client, LoginQuery } from "../utils";
 
-function Login() {
+function ForgetPassword() {
   const width = useWindowWidth();
   const [form] = Form.useForm();
   const [token, setToken] = useState("");
@@ -37,8 +37,8 @@ function Login() {
 
   return (
     <>
-      <div class="min-h-screen flex flex-col items-center justify-center bg-gray-300">
-        <div class="flex flex-col bg-white shadow-md px-4 sm:px-6 md:px-8 lg:px-10 py-8 rounded-md w-full max-w-md">
+      <div className="grid gap-y-6 py-6 pb-14 container mx-auto">
+        <div className="bg-white transparent flex flex-col gap-y-2 text-center items-center rounded-lg px-6 py-10">
           <div className="loginImage">
             <img
               src={loginImg}
@@ -91,17 +91,14 @@ function Login() {
             >
               <Input
                 prefix={<RiLockPasswordLine size={20} />}
-                placeholder="New Password"
+                placeholder="Password"
                 type="password"
                 // value={password}
                 // onChange={(e) => setPassword(e.target.value)}
               ></Input>
             </Form.Item>
             <div className="flex items-center justify-between">
-              <a
-                href="/forget"
-                className="self-end mt-4 text-gray-600 font-bold"
-              >
+              <a href="/#" className="self-end mt-4 text-gray-600 font-bold">
                 Forgot password?
               </a>
             </div>
@@ -131,4 +128,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgetPassword;

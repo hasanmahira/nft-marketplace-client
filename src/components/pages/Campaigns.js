@@ -71,7 +71,7 @@ function Campaigns() {
 
   return (
     <div className="sm:container overflow-hidden md:overflow-visible mx-auto px-0" style={{ width: width < 640 ? width : '' }}>
-      <h3 className="font-semibold hidden sm:block text-sm mb-3">Kampanyalar</h3>
+      <h3 className="font-semibold hidden sm:block text-sm mb-3">Most Populars</h3>
       <Slider className="-mx-2 relative" {...settings}>
         {banners && banners.map((banner) => (
           <div key={banner.id} className="px-100">
