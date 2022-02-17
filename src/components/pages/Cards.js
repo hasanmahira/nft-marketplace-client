@@ -1,43 +1,12 @@
 import React, { useState, useEffect } from "react";
 import CardItem from 'components/organisms/CardItem';
-import UseNftFiles from '../hooks/UseNftFiles'
-
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  useQuery,
-  gql,
-  useLazyQuery,
-} from "@apollo/client";
-
-const client = new ApolloClient({
-  uri: "http://127.0.0.1:3000/graphql",
-  cache: new InMemoryCache(),
-});
-
-const query = gql`
-  query {
-    getNftFiles {
-      category
-      cid
-      createdAt
-      creator
-      description
-      isAuction
-      name
-      onSale
-      price
-      updatedAt
-    }
-  }
-`;
+import {Client, CardQuery} from '../utils'
 
 function Cards() {
   const [nftFiles, setNftFiles] = useState([]);
 
   async function getData() {
-    await client.query({ query: query }).then((result) => {
+    await Client.query({ query: CardQuery }).then((result) => {
       result ? setNftFiles(result.data.getNftFiles) : setNftFiles([]);
     });
   }

@@ -1,60 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useWindowWidth } from "@react-hook/window-size";
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  useQuery,
-  gql,
-  useLazyQuery,
-  variables,
-  useMutation,
-} from "@apollo/client";
 import { DatePicker, message, Col, Row, Form, Input, Upload } from "antd";
 import Button from "../atoms/Button.js";
-import { FaRegUser } from "react-icons/fa";
+import { FaFileUpload } from "react-icons/fa";
 import { Buffer } from "buffer";
 import { NFTStorage, File, Blob } from "nft.storage";
-// import * as fs from "fs/promises";
+import { Client, CreateNftMut } from "../utils";
+
 const { Dragger } = Upload;
 
 const token =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQ5YTg4NDgxMURmNUVGMTA0OGY2NjAxNmNhOTA0Rjk5NDM3RTc3NTkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0NDk5NjY4ODc5OCwibmFtZSI6Im9yaWNhIn0.YcnH87tnfHhfMa5sfBpCQXHuLMS6m8y5ZDfiwcrssZ0";
 
 const nftStorageClient = new NFTStorage({ token });
-
-const client = new ApolloClient({
-  uri: "http://127.0.0.1:3000/graphql",
-  cache: new InMemoryCache(),
-});
-
-const createNftMut = gql`
-  mutation createNft(
-    $creator: String!
-    $price: Float!
-    $name: String!
-    $description: String!
-    $category: Int!
-    $onSale: Boolean!
-    $isAuction: Boolean!
-    $cid: String!
-    $createdAt: String!
-    $updatedAt: String!
-  ) {
-    createNft(
-      creator: $creator
-      name: $name
-      price: $price
-      description: $description
-      category: $category
-      onSale: $onSale
-      isAuction: $isAuction
-      cid: $cid
-      createdAt: $createdAt
-      updatedAt: $updatedAt
-    )
-  }
-`;
 
 function CreateNftFile() {
   const width = useWindowWidth();
@@ -75,9 +33,9 @@ function CreateNftFile() {
     createdAt,
     updatedAt
   ) {
-    await client
+    await Client
       .mutate({
-        mutation: createNftMut,
+        mutation: CreateNftMut,
         variables: {
           creator: creator,
           name: name,
@@ -133,7 +91,7 @@ function CreateNftFile() {
     } = form.getFieldsValue("name");
     const nftCid = await nftStorageClient.storeBlob(new Blob([base64File]));
     cid = nftCid;
-    creator = "current user comes from hooks or token";
+    creator = localStorage.getItem('email');
     createdAt = Date.now().toString();
     updatedAt = Date.now().toString();
     // if (
@@ -153,8 +111,8 @@ function CreateNftFile() {
     // ) {
     createNft(
       creator,
-      parseFloat(12),
-      "name",
+      parseFloat(price),
+      name,
       description,
       parseInt(category),
       Boolean(onSale),
@@ -170,8 +128,8 @@ function CreateNftFile() {
 
   return (
     <>
-      <div className="grid gap-y-6 py-6 pb-14 container mx-auto">
-        <div className="bg-white transparent flex flex-col gap-y-2 text-center items-center rounded-lg px-6 py-10">
+      <div className="grid gap-y-3 py-3 pb-3 container mx-auto">
+        <div className="bg-white transparent flex flex-col gap-y-2 text-center items-center rounded-lg px-2 py-5">
           <Form
             form={form}
             onSubmit={() => handleSubmit()}
@@ -203,12 +161,6 @@ function CreateNftFile() {
                   ]}
                   className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
                 >
-                  <label
-                    className="block text-grey-darker text-sm font-bold mb-2"
-                    htmlFor="Price"
-                  >
-                    Price
-                  </label>
                   <Input placeholder="Price" type="float"></Input>
                 </Form.Item>
 
@@ -223,12 +175,6 @@ function CreateNftFile() {
                   ]}
                   className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
                 >
-                  <label
-                    className="block text-grey-darker text-sm font-bold mb-2"
-                    htmlFor="Name"
-                  >
-                    Name
-                  </label>
                   <Input placeholder="Name" type="name"></Input>
                 </Form.Item>
 
@@ -243,7 +189,7 @@ function CreateNftFile() {
                   ]}
                   className="pl-8 border-b-2 font-display focus:outline-none focus:border-primarycolor transition-all duration-500 capitalize text-lg"
                 >
-                  <Input placeholder="description" type="description"></Input>
+                  <Input placeholder="Description" type="description"></Input>
                 </Form.Item>
 
                 <Form.Item
@@ -288,6 +234,8 @@ function CreateNftFile() {
                   <Input placeholder="isAuction" type="boolean"></Input>
                 </Form.Item>
 
+                <div  className="my-5 w-full flex justify-center bg-green-500 text-gray-100 p-4  rounded-full tracking-wide
+                  font-semibold  focus:outline-none focus:shadow-outline hover:bg-sky-600 shadow-lg cursor-pointer transition ease-in duration-300">
                 <Dragger
                   name="File"
                   multiple={false}
@@ -306,8 +254,9 @@ function CreateNftFile() {
                     });
                   }}
                 >
-                  <FaRegUser size={20} position="center" />
+                  <FaFileUpload size={50} position="center" />
                 </Dragger>
+                </div>
 
                 <div>
                   <button

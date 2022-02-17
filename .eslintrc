@@ -1,8 +1,8 @@
 {
-    "extends": "airbnb",
+    // "extends": "airbnb",
     "plugins": ["react"],
     "rules": {
-        "max-len": ["error", {"code":600}],
+        "max-len": ["error", {"code":700}],
         "eqeqeq":0,
         "no-restricted-syntax":0,
         "react/jsx-filename-extension":0

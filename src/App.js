@@ -2,12 +2,14 @@ import Header from './components/pages/Header';
 import HomePage from './components/pages/HomePage';
 import Login from './components/pages/Login';
 import Register from './components/pages/Register';
+import ForgetPassword from './components/pages/ForgetPassword';
 import Footer from './components/pages/Footer';
 import CreateNftFile from './components/pages/CreateNftFile';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Switch } from 'react-router';
 
 function App() {
+
   return (
     <Router>
       <Header />
@@ -23,6 +25,9 @@ function App() {
         </Route>
         <Route path='/create'>
           <CreateNftFile />
+        </Route>
+        <Route path='/forget'>
+          <ForgetPassword />
         </Route>
       </Switch>
       <Footer />
